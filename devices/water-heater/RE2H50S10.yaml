@@ -13,6 +13,8 @@
 #   - esphome/HA high demand maps to water heater Hybrid Plus
 # - reported ERDs at the bottom, with brief comments
 # - success with first build adapter (burkemw3) and mulcmu adapter (mannkind)
+# - notes marked "RE2H65T10:" in the ERD list below were checked on the 65 gal model of the same family (see
+#   RE2H65T10.yaml) and have not been re-checked on an RE2H50S10
 # - mannkind did initial work in https://community.home-assistant.io/t/water-heater-bradford-white/588528/25, burkemw3 did polishing
 
 # GEA2 discovery complete — 44 ERDs responded out of 2445 scanned
@@ -27,9 +29,9 @@
 #   0x4024  # User Setpoint Temperature - looks correct
 #   0x4025  # Vacation Setpoint Temperature - not sure yet
 #   0x4026  # Actual Setpoint Temperature - looks correct
-#   0x4028  # Timed Mode Hours Remaining - haven't checked
+#   0x4028  # Timed Mode Hours Remaining - haven't checked (RE2H65T10: counts down; Electric (Only) starts at 72, Vacation at 168)
 #   0x4040  # Available Modes - looks correct
-#   0x4041  # Tank size - haven't checked
+#   0x4041  # Tank size - haven't checked (RE2H65T10: reads 65)
 #   0x4047  # Min/max allowed setpoint - looks correct
 #   0x4048  # Min/max allowed vacation setpoint - haven't checked
 #   0x4049  # Max allowed vacation hours - haven't checked
@@ -38,17 +40,17 @@
 #   0x404D  # Anode hours of service - reported zeroes, probably doesn't work
 #   0x4056  # Diagnostic Failure counts - haven't checked
 #   0x4058  # Heating Issues - haven't checked
-#   0x405F  # T1 Temperature - haven't checked
-#   0x4060  # T2 Temperature - mannkind called this ambinent, I went with it, looks plausible
-#   0x4061  # T3a Temperature - haven't checked
-#   0x4062  # T3b Temperature - haven't checked
-#   0x4063  # T4 Temperature - haven't checked
-#   0x4064  # T5 Temperature - mannkind called this ambinent, I went with it, looks plausible
+#   0x405F  # T1 Temperature - haven't checked (RE2H65T10: bottom of the tank; drops when hot water is drawn)
+#   0x4060  # T2 Temperature - mannkind called this ambinent, I went with it, looks plausible (RE2H65T10: top of the tank)
+#   0x4061  # T3a Temperature - haven't checked (RE2H65T10: evaporator inlet)
+#   0x4062  # T3b Temperature - haven't checked (RE2H65T10: evaporator outlet)
+#   0x4063  # T4 Temperature - haven't checked (RE2H65T10: compressor discharge)
+#   0x4064  # T5 Temperature - mannkind called this ambinent, I went with it, looks plausible (RE2H65T10: intake air; only reads room air while the fan runs)
 #   0x4065  # Measured current - looks correct
 #   0x4066  # Measured voltage - looks slightly high, but correct
 #   0x4068  # Relay status - looks correct
-#   0x4069  # Flow state - reported zeroes, probably doesn't work
-#   0x406E  # T6 Temperature - haven't checked
+#   0x4069  # Flow state - reported zeroes, probably doesn't work (RE2H65T10: not water flow; reads 8 around each compressor run, also 1, 9, 11)
+#   0x406E  # T6 Temperature - haven't checked (RE2H65T10: 0xFFFF, not fitted)
 #   0x4081  # Anode alarm active - haven't checked, doubt it works since other anode checks don't
 #   0x4082  # Accessory low battery alarm active - haven't checked
 #   0x4083  # Accessory leak detected alarm active - haven't checked
@@ -306,6 +308,8 @@ binary_sensor:
     erd: 0x4068
     bitmask: 0x02
     byte_offset: 1
+  # On an RE2H65T10 the panel's Service Mode, which switches one element on at a time, showed bit 0x04 is the
+  # LOWER element and 0x08 the UPPER, the reverse of the two sensors below. Not re-checked on an RE2H50S10.
   - platform: gea
     gea_id: gea_hub
     id: upper_on
