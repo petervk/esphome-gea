@@ -1464,7 +1464,7 @@ void GEAComponent::discovery_save_progress_() {
   memcpy(prefs.valid_bitmap, discovery_bitmap_.data(), GEA2_DISCOVERY_BITMAP_BYTES);
   discovery_pref_.save(&prefs);
   ESP_LOGD(TAG, "Discovery: saved progress — %zu / %zu scanned, %zu found", discovery_index_, GEA2_DISCOVERY_TABLE_SIZE,
-           poll_erds_.size());
+           discovery_found_erds_.size());
 }
 
 void GEAComponent::log_discovery_erds_() const {
