@@ -41,7 +41,7 @@ gea:
   uart_id: uart_gea
   protocol: gea2
   dest_address: 0xC0     # optional — omit to let the hub discover it at boot
-  poll_interval: 2s      # how often to refresh each declared ERD
+  poll_interval: 2s      # gap between successive ERD reads (one ERD per interval)
 ```
 
 ## Configuration variables
