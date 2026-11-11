@@ -15,7 +15,7 @@ class GEASelect : public select::Select, public GEAEntity, public Component {
 
   // Receive ERD data from the bus: decode the value, look it up in options_.
   void on_erd_data(const std::vector<uint8_t> &data) override {
-    if (data.empty())
+    if (data.empty() || !payload_fits_decode_(data))
       return;
     auto key = (uint32_t)decode_as_float(data);
     auto it = options_.find(key);

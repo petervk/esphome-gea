@@ -61,6 +61,26 @@ float GEAEntity::decode_as_float(const std::vector<uint8_t> &data) const {
   return raw * multiplier_ + offset_;
 }
 
+bool GEAEntity::payload_fits_decode_(const std::vector<uint8_t> &data) const {
+  size_t need = 1;
+  switch (decode_) {
+    case GeaDecodeType::UINT16_BE:
+    case GeaDecodeType::UINT16_LE:
+    case GeaDecodeType::INT16_BE:
+    case GeaDecodeType::INT16_LE: need = 2; break;
+    case GeaDecodeType::UINT32_BE: need = 3; break;  // decode_as_float() also accepts a 3-byte value
+    case GeaDecodeType::UINT32_LE:
+    case GeaDecodeType::INT32_BE:
+    case GeaDecodeType::INT32_LE: need = 4; break;
+    default: break;
+  }
+  if (data.size() >= (size_t)byte_offset_ + need)
+    return true;
+  ESP_LOGW(TAG, "ERD 0x%04X: payload is %zu B, too short to decode %zu B at offset %u — ignoring", erd_, data.size(),
+           need, byte_offset_);
+  return false;
+}
+
 std::string GEAEntity::decode_as_hex(const std::vector<uint8_t> &data) const {
   if (data.empty())
     return "0x";

@@ -25,6 +25,8 @@ class GEATextSensor : public text_sensor::TextSensor, public GEAEntity, public C
       publish_state(decode_ascii_string(data));
     } else if (!options_.empty()) {
       // Decode as number, look up in options map
+      if (!payload_fits_decode_(data))
+        return;
       auto key = (uint32_t)decode_as_float(data);
       auto it = options_.find(key);
       if (it != options_.end()) {
@@ -39,6 +41,8 @@ class GEATextSensor : public text_sensor::TextSensor, public GEAEntity, public C
       publish_state(decode_as_hex(data));
     } else {
       // Publish as decimal string of the numeric decoded value
+      if (!payload_fits_decode_(data))
+        return;
       float val = decode_as_float(data);
       char buf[32];
       // Use integer formatting when the value has no fractional part

@@ -116,6 +116,11 @@ class GEAEntity {
   // multiplier/offset (output = raw * multiplier + offset).
   float decode_as_float(const std::vector<uint8_t> &data) const;
 
+  // True when data holds enough bytes at byte_offset_ for the configured decode
+  // type. Logs a warning and returns false otherwise, so callers can skip the
+  // update instead of publishing the 0 that decode_as_float() falls back to.
+  bool payload_fits_decode_(const std::vector<uint8_t> &data) const;
+
   // Decode the ERD byte vector into a hex string like "0x0100"
   std::string decode_as_hex(const std::vector<uint8_t> &data) const;
 
